@@ -1,0 +1,15 @@
+venv/
+.venv/
+
+__pycache__/
+*.pyc
+
+.env
+
+data/vector_store/
+data/chroma/
+
+.idea/
+
+Thumbs.db
+.DS_Store
