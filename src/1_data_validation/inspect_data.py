@@ -12,7 +12,7 @@ from hazm import Normalizer, WordTokenizer, words_list
 from pypdf import PdfReader
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_RAW_DIR = BASE_DIR / "data" / "raw"
 
 BLANK_PAGE_CHARS = 50

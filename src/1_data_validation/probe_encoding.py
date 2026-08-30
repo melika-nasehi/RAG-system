@@ -14,7 +14,7 @@ import unicodedata
 
 from pypdf import PdfReader
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 CALIBRATION_DIR = BASE_DIR / "data" / "calibration_data"
 
 DATE_PATTERN = re.compile(r'([\u0660-\u0669\u06F0-\u06F9\d]{1,4})/([\u0660-\u0669\u06F0-\u06F9\d]{1,2})/([\u0660-\u0669\u06F0-\u06F9\d]{1,4})')
