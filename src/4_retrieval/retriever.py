@@ -22,7 +22,7 @@ from embedder import embed_query
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 STORE_DIR = BASE_DIR / "data" / "vector_store"
 
-DEFAULT_COLLECTION = "chunks_750_200"
+DEFAULT_COLLECTION = "chunks_500_100"
 
 # Passages handed to the generator. More context isn't automatically better —
 # an LLM given ten passages has more chance to answer from the wrong one.

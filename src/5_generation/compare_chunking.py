@@ -14,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "5_generation"))
 from rag_chain import RagChain
 
 sys.path.insert(0, str(Path(__file__).parent))
-from run_eval import evaluate_item, summarise
+from src.evaluation.run_eval import evaluate_item, summarise
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 EVAL_SET = BASE_DIR / "data" / "evaluation_set.json"

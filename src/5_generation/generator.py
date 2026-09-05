@@ -19,8 +19,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # "gemini" while developing, "ollama" for the local deliverable.
 BACKEND = os.getenv("LLM_BACKEND", "gemini")
 
-GEMINI_MODEL = "gemini-2.5-flash-lite"
-OLLAMA_MODEL = "qwen3:4b-instruct-2507"
+GEMINI_MODEL = "gemini-3.5-flash-lite"
+OLLAMA_MODEL = "qwen3:4b"
+
+AGENTROUTER_MODEL = "deepseek-v4-flash"
+AGENTROUTER_BASE_URL = "https://agentrouter.org/v1"
 
 TEMPERATURE = 0.1
 
@@ -52,7 +55,7 @@ def _generate_gemini(system_prompt, user_message, max_retries=3):
     if not api_key:
         raise RuntimeError("GOOGLE_API_KEY not found — check .env")
 
-    client = genai.Client(api_key=api_key)
+    client = genai.Client(api_key=api_key, vertexai=False)
 
     for attempt in range(max_retries):
         try:
@@ -84,8 +87,29 @@ def _generate_ollama(system_prompt, user_message):
             {"role": "user", "content": user_message},
         ],
         options={"temperature": TEMPERATURE},
+        keep_alive="30m",
     )
     return response["message"]["content"]
+
+
+def _generate_agentrouter(system_prompt, user_message):
+    from openai import OpenAI
+
+    _load_env()
+    api_key = os.environ.get("AGENTROUTER_API_KEY")
+    if not api_key:
+        raise RuntimeError("AGENTROUTER_API_KEY not found — check .env")
+
+    client = OpenAI(api_key=api_key, base_url=AGENTROUTER_BASE_URL)
+    response = client.chat.completions.create(
+        model=AGENTROUTER_MODEL,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_message},
+        ],
+        temperature=TEMPERATURE,
+    )
+    return response.choices[0].message.content
 
 
 def generate(system_prompt, user_message, backend=None):
@@ -96,6 +120,8 @@ def generate(system_prompt, user_message, backend=None):
         return _generate_gemini(system_prompt, user_message)
     if chosen == "ollama":
         return _generate_ollama(system_prompt, user_message)
+    if chosen == "agentrouter":
+        return _generate_agentrouter(system_prompt, user_message)
 
     raise ValueError(f"unknown backend: {chosen}")
 
@@ -105,4 +131,5 @@ def active_backend():
     return {
         "gemini": f"gemini / {GEMINI_MODEL}",
         "ollama": f"ollama / {OLLAMA_MODEL}",
+        "agentrouter": f"agentrouter / {AGENTROUTER_MODEL}",
     }.get(BACKEND, BACKEND)

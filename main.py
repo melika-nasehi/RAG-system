@@ -1,16 +1,11 @@
+from pathlib import Path
+import sys
+sys.path.insert(0, str(Path('src/5_generation')))
+from rag_chain import RagChain
 
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+chain = RagChain()
+for i in range(3):
+    answer = chain.ask("برای انتقالی به دانشگاه دیگر چه شرایطی لازم است؟")
+    print(f"--- attempt {i+1} ---")
+    print(answer.text)
+    print()
