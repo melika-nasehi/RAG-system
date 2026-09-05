@@ -19,7 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # "gemini" while developing, "ollama" for the local deliverable.
 BACKEND = os.getenv("LLM_BACKEND", "gemini")
 
-GEMINI_MODEL = "gemini-3.6-flash"
+GEMINI_MODEL = "gemini-2.5-flash-lite"
 OLLAMA_MODEL = "qwen3:4b-instruct-2507"
 
 TEMPERATURE = 0.1
@@ -39,9 +39,13 @@ def _load_env():
         os.environ.setdefault(key.strip(), value.strip())
 
 
-def _generate_gemini(system_prompt, user_message):
+def _generate_gemini(system_prompt, user_message, max_retries=3):
+    """Retries on rate limits, since free-tier quotas make 429s routine
+    rather than exceptional — not something to let crash a 48-call batch run."""
     from google import genai
     from google.genai import types
+    from google.genai.errors import ClientError
+    import time
 
     _load_env()
     api_key = os.environ.get("GOOGLE_API_KEY")
@@ -49,15 +53,25 @@ def _generate_gemini(system_prompt, user_message):
         raise RuntimeError("GOOGLE_API_KEY not found — check .env")
 
     client = genai.Client(api_key=api_key)
-    response = client.models.generate_content(
-        model=GEMINI_MODEL,
-        contents=user_message,
-        config=types.GenerateContentConfig(
-            system_instruction=system_prompt,
-            temperature=TEMPERATURE,
-        ),
-    )
-    return response.text
+
+    for attempt in range(max_retries):
+        try:
+            response = client.models.generate_content(
+                model=GEMINI_MODEL,
+                contents=user_message,
+                config=types.GenerateContentConfig(
+                    system_instruction=system_prompt,
+                    temperature=TEMPERATURE,
+                ),
+            )
+            return response.text
+        except ClientError as error:
+            if "RESOURCE_EXHAUSTED" in str(error) and attempt < max_retries - 1:
+                wait = 15 * (attempt + 1)
+                print(f"    rate limited, waiting {wait}s...", flush=True)
+                time.sleep(wait)
+                continue
+            raise
 
 
 def _generate_ollama(system_prompt, user_message):

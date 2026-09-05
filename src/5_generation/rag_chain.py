@@ -40,8 +40,13 @@ class Answer:
 
 
 class RagChain:
-    def __init__(self, retriever=None, top_k=DEFAULT_TOP_K):
-        self._retriever = retriever or Retriever()
+    def __init__(self, retriever=None, top_k=DEFAULT_TOP_K, collection_name=None):
+        if retriever is not None:
+            self._retriever = retriever
+        elif collection_name is not None:
+            self._retriever = Retriever(collection_name=collection_name)
+        else:
+            self._retriever = Retriever()
         self._top_k = top_k
 
     def ask(self, question, top_k=None):
