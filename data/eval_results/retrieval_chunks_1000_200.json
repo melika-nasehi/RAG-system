@@ -1,0 +1,83 @@
+{
+  "summary": {
+    "questions": 12,
+    "hit_rate_at_10": 1.0,
+    "hit_rate_at_4": 1.0,
+    "mean_rank": 1.17,
+    "mean_top_score": 0.671
+  },
+  "records": [
+    {
+      "id": "Q01",
+      "category": "direct",
+      "rank": 1,
+      "top_score": 0.598
+    },
+    {
+      "id": "Q02",
+      "category": "multi_part",
+      "rank": 1,
+      "top_score": 0.6959
+    },
+    {
+      "id": "Q03",
+      "category": "multi_part",
+      "rank": 1,
+      "top_score": 0.7384
+    },
+    {
+      "id": "Q04",
+      "category": "direct",
+      "rank": 1,
+      "top_score": 0.6474
+    },
+    {
+      "id": "Q05",
+      "category": "multi_part",
+      "rank": 1,
+      "top_score": 0.6986
+    },
+    {
+      "id": "Q06",
+      "category": "multi_part",
+      "rank": 1,
+      "top_score": 0.7672
+    },
+    {
+      "id": "Q07",
+      "category": "direct",
+      "rank": 1,
+      "top_score": 0.6543
+    },
+    {
+      "id": "Q08",
+      "category": "multi_part",
+      "rank": 1,
+      "top_score": 0.7518
+    },
+    {
+      "id": "Q10",
+      "category": "multi_part",
+      "rank": 2,
+      "top_score": 0.6296
+    },
+    {
+      "id": "Q11",
+      "category": "direct",
+      "rank": 1,
+      "top_score": 0.611
+    },
+    {
+      "id": "Q12",
+      "category": "colloquial",
+      "rank": 2,
+      "top_score": 0.6859
+    },
+    {
+      "id": "Q13",
+      "category": "colloquial",
+      "rank": 1,
+      "top_score": 0.5723
+    }
+  ]
+}

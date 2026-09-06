@@ -1,0 +1,146 @@
+[
+  {
+    "id": "Q01",
+    "category": "direct",
+    "question": "شرط معدل برای دانشجوی ممتاز در رشته‌های علوم انسانی چیست؟",
+    "reference_answer": "معدل کل کارشناسی حداقل ۱۸",
+    "source_document": "آئین نامه بهره مندی از تسهیلات صندوق رفاه دانشجویی.pdf",
+    "answerable": true,
+    "note": null
+  },
+  {
+    "id": "Q02",
+    "category": "multi_part",
+    "question": "دانشجوی کم‌بینا و نابینا چه دانشجویی محسوب می‌شود؟",
+    "reference_answer": "کم‌بینا: کیفیت بینایی در هر دو چشم بین ۱/۱۰ تا ۳/۱۰. نابینا: کیفیت بینایی در هر دو چشم کمتر از ۱/۱۰، یا میدان بینایی کمتر از بیست درجه",
+    "source_document": "آئین نامه بهره مندی از تسهیلات صندوق رفاه دانشجویی.pdf",
+    "answerable": true,
+    "note": null
+  },
+  {
+    "id": "Q03",
+    "category": "multi_part",
+    "question": "برای دریافت وام تحصیلی چه مدارکی لازم است؟",
+    "reference_answer": "الف) سند تعهدنامه الصاقی در سامانه صندوق. ب) مدارک اختصاصی بر حسب دسته: سند تأهل یا نامه سرپرستی فرزند، معرفی‌نامه کمیته امداد و بهزیستی، کارنامه آموزشی، گواهی پزشک متخصص، معرفی‌نامه خوابگاه غیردولتی",
+    "source_document": "آئین نامه بهره مندی از تسهیلات صندوق رفاه دانشجویی.pdf",
+    "answerable": true,
+    "note": null
+  },
+  {
+    "id": "Q04",
+    "category": "direct",
+    "question": "اصل عدم جایگزینی در استفاده از هوش مصنوعی چیست؟",
+    "reference_answer": "هوش مصنوعی صرفاً نقش ابزار کمکی دارد و نباید جایگزین نقش‌های بنیادین پژوهشگر شود: طراحی پژوهش، تحلیل نهایی، تفسیر نتایج، نتیجه‌گیری",
+    "source_document": "شيوه نامه و فرم هاي استفاده از هوش مصنوعي در پايان نامه تز.pdf",
+    "answerable": true,
+    "note": null
+  },
+  {
+    "id": "Q05",
+    "category": "multi_part",
+    "question": "سطوح استفاده از هوش مصنوعی کدام‌اند؟",
+    "reference_answer": "سطح ۰: بدون استفاده (مجاز). سطح ۱: کمک زبانی (مجاز با افشای حداقلی). سطح ۲: کمک فکری (مجاز با افشای استاندارد). سطح ۳: کمک فنی (مجاز مشروط). سطح ۴: تولید محتوا (غیرمجاز). سطح ۵: جایگزینی پژوهشگر (تخلف جدی)",
+    "source_document": "شيوه نامه و فرم هاي استفاده از هوش مصنوعي در پايان نامه تز.pdf",
+    "answerable": true,
+    "note": "targeted test: table structure is known to break during extraction"
+  },
+  {
+    "id": "Q06",
+    "category": "multi_part",
+    "question": "در مقطع کارشناسی چه سطوحی از هوش مصنوعی مجاز است؟",
+    "reference_answer": "سطوح ۰، ۱ و ۲ مجاز است. سطح ۳ صرفاً با مجوز استاد درس یا استاد راهنما. سطوح ۴ و ۵ در فعالیت‌های ارزیابی‌شونده ممنوع است. گذراندن آموزش سواد هوش مصنوعی الزامی است",
+    "source_document": "شيوه نامه و فرم هاي استفاده از هوش مصنوعي در پايان نامه تز.pdf",
+    "answerable": true,
+    "note": null
+  },
+  {
+    "id": "Q07",
+    "category": "direct",
+    "question": "مدت مجاز مرخصی زایمان چقدر است؟",
+    "reference_answer": "یک نیمسال در طول دوره بارداری، و حداکثر ۴ نیمسال پس از زایمان (برای مادران دانشجو دارای فرزند زیر دو سال)",
+    "source_document": "آئین نامه یکپارچه مقررات آموزشی کلیه مقاطع تحصیلی از سال 1402 و بعد از آن( بروزرسانی شده پاییز 1404).pdf",
+    "answerable": true,
+    "note": "targeted test: source text spans a page boundary with a header interruption"
+  },
+  {
+    "id": "Q08",
+    "category": "multi_part",
+    "question": "شرایط لازم برای ورود به مرحله آزمون جامع دکتری چیست؟",
+    "reference_answer": "۱) گذراندن کلیه دروس مرحله آموزشی طبق سرفصل مصوب وزارت علوم، با میانگین حداقل ۱۶. ۲) کسب بسندگی زبان خارجی طبق دستورالعمل ابلاغی وزارت علوم",
+    "source_document": "آئین نامه یکپارچه مقررات آموزشی کلیه مقاطع تحصیلی از سال 1402 و بعد از آن( بروزرسانی شده پاییز 1404).pdf",
+    "answerable": true,
+    "note": null
+  },
+  {
+    "id": "Q09",
+    "category": "unanswerable",
+    "question": "شرایط انضباطی خوابگاه دخترانه دانشگاه تهران چیه؟",
+    "reference_answer": null,
+    "source_document": null,
+    "answerable": false,
+    "note": "wrong university — tests whether the system confuses topical overlap with actual relevance"
+  },
+  {
+    "id": "Q10",
+    "category": "multi_part",
+    "question": "در چه مواردی غیبت در امتحان قابل قبول است؟",
+    "reference_answer": "۱) بستری در بیمارستان (با مدارک: پذیرش، نسخه، آزمایشات، خلاصه پرونده، برگه ترخیص). ۲) بستری سرپایی با تایید پزشک مرکز بهداشت دانشگاه. ۳) ناراحتی‌های اعصاب و روان با گواهی تاییدشده. ۴) بیماری‌های خاص با مدارک و گواهی مربوطه",
+    "source_document": "شیوه نامه غیبت در امتحانات و حذف پزشکی دانشگاه زنجان.pdf",
+    "answerable": true,
+    "note": null
+  },
+  {
+    "id": "Q11",
+    "category": "direct",
+    "question": "مهلت ارائه گواهی پزشکی برای حذف پزشکی چقدر است؟",
+    "reference_answer": "حداکثر سه روز کاری بعد از روز امتحان",
+    "source_document": "شیوه نامه غیبت در امتحانات و حذف پزشکی دانشگاه زنجان.pdf",
+    "answerable": true,
+    "note": null
+  },
+  {
+    "id": "Q12",
+    "category": "colloquial",
+    "question": "اگه سر امتحان مریض بشم چیکار کنم؟",
+    "reference_answer": "باید بلافاصله با اطلاع مسئولین آموزشی به مرکز بهداشت و درمان دانشگاه مراجعه کند؛ در صورت تأیید مرکز، درس حذف می‌شود",
+    "source_document": "شیوه نامه غیبت در امتحانات و حذف پزشکی دانشگاه زنجان.pdf",
+    "answerable": true,
+    "note": "colloquial rephrasing of formal source wording ('قادر به ادامه امتحان نباشد')"
+  },
+  {
+    "id": "Q13",
+    "category": "colloquial",
+    "question": "می‌تونم از ChatGPT برای نوشتن پایان‌نامه‌م استفاده کنم؟",
+    "reference_answer": "بستگی به سطح استفاده دارد. سطوح ۰ تا ۲ مجاز، سطح ۳ مشروط، سطوح ۴ و ۵ غیرمجاز و تخلف است",
+    "source_document": "شيوه نامه و فرم هاي استفاده از هوش مصنوعي در پايان نامه تز.pdf",
+    "answerable": true,
+    "note": "source never names a specific tool — tests semantic generalisation beyond keyword overlap"
+  },
+  {
+    "id": "Q14",
+    "category": "unanswerable",
+    "question": "هزینه غذای سلف دانشجویی چقدر است؟",
+    "reference_answer": null,
+    "source_document": null,
+    "answerable": false,
+    "note": "topically adjacent to student welfare documents but not covered"
+  },
+  {
+    "id": "Q15",
+    "category": "unanswerable",
+    "question": "برای انتقالی به دانشگاه دیگر چه شرایطی لازم است؟",
+    "reference_answer": null,
+    "source_document": null,
+    "answerable": false,
+    "note": "hardest unanswerable case: topically central to the corpus, not actually covered"
+  },
+  {
+    "id": "Q16",
+    "category": "colloquial",
+    "question": "اگر سر کلاس نروم چه اتفاقی می‌افتد؟",
+    "reference_answer": null,
+    "source_document": null,
+    "answerable": false,
+    "note": "confirmed reproducible lexical-gap failure (section 15.5): retrieval scores below 0.42 on every candidate; regular class attendance appears uncovered by the corpus, which focuses on exam absence. Primary evidence for the hybrid-search decision."
+  }
+]
