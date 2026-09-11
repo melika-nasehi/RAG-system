@@ -27,6 +27,13 @@ AGENTROUTER_BASE_URL = "https://agentrouter.org/v1"
 
 TEMPERATURE = 0.1
 
+# How long Ollama keeps qwen3:4b resident after a reply. This machine is not
+# sized for a 4B model sitting in memory indefinitely, and the real usage
+# pattern is one question at a time with gaps between them, not a batch —
+# so it is better to pay a reload on the next question than hold the model
+# hostage. Override with OLLAMA_KEEP_ALIVE if this runs on stronger hardware.
+OLLAMA_KEEP_ALIVE = os.getenv("OLLAMA_KEEP_ALIVE", "5m")
+
 
 def _load_env():
     """Read .env without adding a dependency for four lines of parsing."""
@@ -80,16 +87,45 @@ def _generate_gemini(system_prompt, user_message, max_retries=3):
 def _generate_ollama(system_prompt, user_message):
     import ollama
 
+    # Qwen3 is a hybrid reasoning model: left to itself it emits a long
+    # chain-of-thought before the answer. This task is extraction, not
+    # reasoning — restate what a passage says — so the thinking pass buys no
+    # accuracy and, on CPU, turns a 30-second answer into several minutes.
+    # "/no_think" plus think=False is Qwen3's switch to skip it (harmless for
+    # models that don't recognise it); _strip_reasoning is the backstop for
+    # when it reasons anyway.
     response = ollama.chat(
         model=OLLAMA_MODEL,
         messages=[
-            {"role": "system", "content": system_prompt},
+            {"role": "system", "content": f"{system_prompt}\n\n/no_think"},
             {"role": "user", "content": user_message},
         ],
         options={"temperature": TEMPERATURE},
-        keep_alive="30m",
+        think=False,
+        keep_alive=OLLAMA_KEEP_ALIVE,
     )
-    return response["message"]["content"]
+    return _strip_reasoning(response["message"]["content"])
+
+
+def _strip_reasoning(text):
+    """Drop Qwen3's leaked chain-of-thought.
+
+    The first attempt at this looked for a Persian-bearing line starting
+    well into the text — wrong, because the reasoning itself is full of
+    Persian: it quotes the question and the passages while narrating in
+    English ("...asking about the minimum GPA requirement for 'دانشجوی
+    ممتاز'..."), so "contains Persian" doesn't mark the reasoning/answer
+    boundary at all.
+
+    What actually marks it: despite `/no_think` and `think=False`, Ollama
+    still emits a closing `</think>` for this model — just without the
+    matching opening tag in `message.content` — right before the real
+    answer. Splitting on the *last* `</think>` is exact and handles a
+    balanced pair too, if one ever appears.
+    """
+    if "</think>" in text:
+        return text.rsplit("</think>", 1)[1].strip()
+    return text.strip()
 
 
 def _generate_agentrouter(system_prompt, user_message):

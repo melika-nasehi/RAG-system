@@ -1,41 +1,51 @@
-import { Component, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Rag, RagAnswer } from './services/rag';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { AuthStore } from './state/auth-store';
 
 @Component({
   selector: 'app-root',
-  imports: [FormsModule],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterOutlet],
+  template: `
+    @if (auth.ready()) {
+      <router-outlet />
+    } @else {
+      <div class="splash" role="status" aria-label="در حال بارگذاری">
+        <span class="spinner"></span>
+      </div>
+    }
+  `,
+  styles: `
+    :host {
+      display: block;
+      height: 100dvh;
+    }
+    .splash {
+      height: 100%;
+      display: grid;
+      place-items: center;
+      background: var(--bg);
+    }
+    .spinner {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 3px solid var(--border-strong);
+      border-top-color: var(--accent);
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  `,
 })
 export class App {
-  protected readonly question = signal('');
-  protected readonly answer = signal<RagAnswer | null>(null);
-  protected readonly loading = signal(false);
-  protected readonly error = signal('');
+  protected readonly auth = inject(AuthStore);
 
-  constructor(private rag: Rag) {}
-
-  ask() {
-    const q = this.question().trim();
-    if (!q) {
-      return;
-    }
-
-    this.loading.set(true);
-    this.error.set('');
-    this.answer.set(null);
-
-    this.rag.ask(q).subscribe({
-      next: (result) => {
-        this.answer.set(result);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        this.error.set('خطا در ارتباط با سرور. مطمئن شوید Django در حال اجراست.');
-        this.loading.set(false);
-        console.error(err);
-      }
-    });
+  constructor() {
+    // Confirm any stored session before the first guarded route resolves.
+    void this.auth.ensureRestored();
   }
 }

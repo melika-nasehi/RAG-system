@@ -10,10 +10,21 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+from datetime import timedelta
+import os
 from pathlib import Path
+
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# The same .env core/ reads (core/generation/generator.py has its own tiny
+# loader to avoid a dependency there; python-dotenv is already installed
+# here via requirements.txt, so Django just uses it directly). One file at
+# the project root holds every secret — API keys and DB credentials alike —
+# instead of secrets being hardcoded per-app.
+load_dotenv(BASE_DIR.parent / ".env")
 
 
 # Quick-start development settings - unsuitable for production
@@ -25,7 +36,12 @@ SECRET_KEY = 'django-insecure-fzhnzw53)l*np82wf2iqps!hm+43wb$*1mcuk6y0)g*qkm2*s-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# DEBUG=True already makes Django accept localhost/127.0.0.1/[::1] even with
+# this empty — the env var is an escape hatch for a host that shows up under
+# unusual local routing (a VPN's virtual adapter, e.g.) without a code change.
+ALLOWED_HOSTS = [
+    h.strip() for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",") if h.strip()
+]
 
 
 # Application definition
@@ -37,7 +53,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
+    'corsheaders',
     'api',
+    'accounts',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +74,12 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",  # Angular dev server
+    "http://127.0.0.1:4200",  # same, when the browser resolves it as a raw IP
+    *[
+        origin.strip()
+        for origin in os.environ.get("CORS_EXTRA_ORIGINS", "").split(",")
+        if origin.strip()
+    ],
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -79,9 +106,15 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("DB_NAME", "rag_system"),
+        "USER": os.environ.get("DB_USER", "postgres"),
+        # No hardcoded fallback — an empty string is a valid value for local
+        # trust-auth Postgres setups, but nothing here is ever a real secret.
+        "PASSWORD": os.environ.get("DB_PASSWORD", ""),
+        "HOST": os.environ.get("DB_HOST", "localhost"),
+        "PORT": os.environ.get("DB_PORT", "5432"),
     }
 }
 
@@ -103,6 +136,37 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+}
+
+# djangorestframework-simplejwt. ALGORITHM is pinned explicitly (also its
+# default) rather than left implicit: simplejwt always decodes with
+# jwt.decode(..., algorithms=[ALGORITHM]) — the algorithm comes from this
+# server-side setting, never from the token's own header — which is what
+# rules out "alg: none" / algorithm-confusion attacks as a class, not just
+# this one configuration.
+SIMPLE_JWT = {
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    # Each use of a refresh token blacklists it and issues a new one in its
+    # place (accounts.tokens.rotate_refresh). A leaked refresh token is only
+    # usable up to the next time its legitimate owner's client refreshes —
+    # after that, both the thief's and the owner's next attempt with the old
+    # token are rejected, which is also how a stolen-token use gets noticed.
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+}
 
 
 # Internationalization

@@ -1,0 +1,10 @@
+# Backend (Django REST) dependencies.
+# The core RAG package and its own dependencies are declared in
+# ../core/pyproject.toml — install it editable:  pip install -e ../core
+
+Django>=5.2,<6
+djangorestframework>=3.15
+django-cors-headers>=4.4
+psycopg[binary]>=3.2
+python-dotenv>=1.0  # loads ../.env — API keys and DB credentials
+djangorestframework-simplejwt>=5.3  # JWT auth — see accounts/tokens.py

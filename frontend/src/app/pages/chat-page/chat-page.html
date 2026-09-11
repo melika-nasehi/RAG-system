@@ -1,0 +1,22 @@
+<div class="app" [class.drawer-open]="store.drawerOpen()">
+  <div class="drawer">
+    <app-sidebar />
+  </div>
+
+  <main class="main">
+    <app-chat-header />
+    <app-message-list (pick)="onExample($event)" />
+    <app-composer [disabled]="store.sending()" (send)="onSend($event)" />
+  </main>
+
+  @if (store.drawerOpen()) {
+    <button
+      type="button"
+      class="backdrop"
+      aria-label="بستن منو"
+      animate.enter="fade-in"
+      animate.leave="fade-out"
+      (click)="store.closeDrawer()"
+    ></button>
+  }
+</div>

@@ -1,0 +1,136 @@
+{
+  "summary": {
+    "answerable": 12,
+    "hit_rate_at_4": 1.0,
+    "hit_rate_at_10": 1.0,
+    "mean_first_hit_rank": 1.083,
+    "mean_top_score_answerable": 0.032,
+    "mean_top_score_unanswerable": 0.031
+  },
+  "records": [
+    {
+      "id": "Q01",
+      "category": "direct",
+      "answerable": true,
+      "top_score": 0.0328,
+      "top_source": "آئین نامه بهره مندی از تسهیلات صندوق رفاه دانشجویی.pdf",
+      "rank": 1
+    },
+    {
+      "id": "Q02",
+      "category": "multi_part",
+      "answerable": true,
+      "top_score": 0.0328,
+      "top_source": "آئین نامه بهره مندی از تسهیلات صندوق رفاه دانشجویی.pdf",
+      "rank": 1
+    },
+    {
+      "id": "Q03",
+      "category": "multi_part",
+      "answerable": true,
+      "top_score": 0.0298,
+      "top_source": "آئین نامه بهره مندی از تسهیلات صندوق رفاه دانشجویی.pdf",
+      "rank": 1
+    },
+    {
+      "id": "Q04",
+      "category": "direct",
+      "answerable": true,
+      "top_score": 0.0325,
+      "top_source": "شيوه نامه و فرم هاي استفاده از هوش مصنوعي در پايان نامه تز.pdf",
+      "rank": 1
+    },
+    {
+      "id": "Q05",
+      "category": "multi_part",
+      "answerable": true,
+      "top_score": 0.0323,
+      "top_source": "شيوه نامه و فرم هاي استفاده از هوش مصنوعي در پايان نامه تز.pdf",
+      "rank": 1
+    },
+    {
+      "id": "Q06",
+      "category": "multi_part",
+      "answerable": true,
+      "top_score": 0.0328,
+      "top_source": "شيوه نامه و فرم هاي استفاده از هوش مصنوعي در پايان نامه تز.pdf",
+      "rank": 1
+    },
+    {
+      "id": "Q07",
+      "category": "direct",
+      "answerable": true,
+      "top_score": 0.0325,
+      "top_source": "آئین نامه یکپارچه مقررات آموزشی کلیه مقاطع تحصیلی از سال 1402 و بعد از آن( بروزرسانی شده پاییز 1404).pdf",
+      "rank": 1
+    },
+    {
+      "id": "Q08",
+      "category": "multi_part",
+      "answerable": true,
+      "top_score": 0.0325,
+      "top_source": "آئین نامه یکپارچه مقررات آموزشی کلیه مقاطع تحصیلی از سال 1402 و بعد از آن( بروزرسانی شده پاییز 1404).pdf",
+      "rank": 1
+    },
+    {
+      "id": "Q09",
+      "category": "unanswerable",
+      "answerable": false,
+      "top_score": 0.0323,
+      "top_source": "آئین نامه واگذاری خوابگاه.pdf"
+    },
+    {
+      "id": "Q10",
+      "category": "multi_part",
+      "answerable": true,
+      "top_score": 0.0325,
+      "top_source": "آئین نامه یکپارچه مقررات آموزشی کلیه مقاطع تحصیلی از سال 1402 و بعد از آن( بروزرسانی شده پاییز 1404).pdf",
+      "rank": 2
+    },
+    {
+      "id": "Q11",
+      "category": "direct",
+      "answerable": true,
+      "top_score": 0.0328,
+      "top_source": "شیوه نامه غیبت در امتحانات و حذف پزشکی دانشگاه زنجان.pdf",
+      "rank": 1
+    },
+    {
+      "id": "Q12",
+      "category": "colloquial",
+      "answerable": true,
+      "top_score": 0.0328,
+      "top_source": "شیوه نامه غیبت در امتحانات و حذف پزشکی دانشگاه زنجان.pdf",
+      "rank": 1
+    },
+    {
+      "id": "Q13",
+      "category": "colloquial",
+      "answerable": true,
+      "top_score": 0.0325,
+      "top_source": "شيوه نامه و فرم هاي استفاده از هوش مصنوعي در پايان نامه تز.pdf",
+      "rank": 1
+    },
+    {
+      "id": "Q14",
+      "category": "unanswerable",
+      "answerable": false,
+      "top_score": 0.0294,
+      "top_source": "آئین نامه یکپارچه مقررات آموزشی کلیه مقاطع تحصیلی از سال 1402 و بعد از آن( بروزرسانی شده پاییز 1404).pdf"
+    },
+    {
+      "id": "Q15",
+      "category": "unanswerable",
+      "answerable": false,
+      "top_score": 0.0315,
+      "top_source": "آئین نامه بهره مندی از تسهیلات صندوق رفاه دانشجویی.pdf"
+    },
+    {
+      "id": "Q16",
+      "category": "colloquial",
+      "answerable": false,
+      "top_score": 0.0323,
+      "top_source": "آئین نامه یکپارچه مقررات آموزشی کلیه مقاطع تحصیلی از سال 1402 و بعد از آن( بروزرسانی شده پاییز 1404).pdf"
+    }
+  ]
+}

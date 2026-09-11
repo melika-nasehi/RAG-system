@@ -1,0 +1,74 @@
+:host {
+  display: block;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.app {
+  height: 100%;
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+}
+
+.drawer {
+  min-width: 0;
+  height: 100%;
+}
+
+.main {
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.backdrop {
+  display: none;
+}
+
+/* ---- Below the desktop breakpoint: sidebar becomes an overlay drawer ---- */
+@media (max-width: 1024px) {
+  .app {
+    grid-template-columns: 1fr;
+  }
+
+  .drawer {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    z-index: 50;
+    transform: translateX(100%);
+    transition: transform var(--transition-slow);
+  }
+
+  .app.drawer-open .drawer {
+    transform: translateX(0);
+  }
+
+  .backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: var(--backdrop);
+    animation: fade-in var(--transition) both;
+  }
+
+  .fade-out {
+    animation: fade-out var(--transition) both;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}

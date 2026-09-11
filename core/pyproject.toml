@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "core"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "chromadb>=1.5",
+    "ollama>=0.6",
+    # Hybrid retrieval — Persian tokenisation + BM25.
+    "hazm>=0.10",
+    "rank-bm25>=0.2.2",
+    # Ingestion — PDF extraction and splitting.
+    "pypdf>=6",
+    "langchain-text-splitters>=1",
+]
+
+[project.optional-dependencies]
+# Generation backends used during development; the local Ollama path needs none.
+gemini = ["google-genai>=2"]
+agentrouter = ["openai>=1"]
+# Cross-encoder reranking (Part 2). Off by default; only needed when RERANK=1.
+rerank = ["sentence-transformers>=6"]
+
+[tool.setuptools.packages.find]
+where = [".."]
+include = ["core", "core.*"]
