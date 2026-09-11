@@ -429,6 +429,7 @@ import { timeAgo } from '../../shared/persian';
       color: var(--text-secondary);
       transition: background var(--transition-fast), color var(--transition-fast);
     }
+    
     .admin-link:hover,
     .logout:hover {
       background: var(--surface-hover);
