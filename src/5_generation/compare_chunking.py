@@ -1,10 +1,4 @@
-"""Run the evaluation set against every chunking configuration and compare.
 
-Chunk size and overlap were adopted from external sources during the
-chunking phase (documented in notes section 10.1) and never validated on
-this corpus. This closes that gap: same 16 questions, same generation
-backend, only the underlying chunk collection changes.
-"""
 
 import json
 from pathlib import Path

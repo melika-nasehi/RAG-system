@@ -1,13 +1,4 @@
-"""Add chunk records to a persistent Chroma collection.
 
-Embedding goes through the shared embedder so the document/query asymmetry
-stays defined in one place. Writes are idempotent: a chunk id already in the
-collection is skipped, so re-adding a document (or resuming an interrupted
-run) never duplicates vectors.
-
-Module form of src/3_embedding/build_index.py, trimmed to the one operation
-the ingestion pipeline needs.
-"""
 
 from __future__ import annotations
 
@@ -20,8 +11,6 @@ from core.indexing.embedder import MODEL_NAME, embed_documents
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 STORE_DIR = BASE_DIR / "data" / "vector_store"
 
-# Bounds how much a failed run loses and how much sits in memory before a
-# write. Ollama batches internally regardless.
 BATCH_SIZE = 32
 
 
@@ -37,8 +26,7 @@ def open_collection(client, name: str):
 
 
 def add_chunks(chunks: list[dict], collection_name: str, store_dir: Path = STORE_DIR) -> int:
-    """Embed and store any of `chunks` not already in the collection. Returns
-    the number of vectors actually added."""
+
     if not chunks:
         return 0
 
@@ -66,12 +54,7 @@ def add_chunks(chunks: list[dict], collection_name: str, store_dir: Path = STORE
 
 
 def remove_chunks(source: str, collection_name: str, store_dir: Path = STORE_DIR) -> None:
-    """Delete every vector whose metadata says it came from `source`.
 
-    Metadata-filtered delete, not id lookup — the caller doesn't need to
-    know which chunk ids a document produced, only its filename, which is
-    what a document is identified by everywhere else in the system too.
-    """
     client = chromadb.PersistentClient(path=str(store_dir))
     try:
         collection = client.get_collection(collection_name)

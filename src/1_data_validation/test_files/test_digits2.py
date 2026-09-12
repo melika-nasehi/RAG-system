@@ -1,4 +1,3 @@
-"""Show the actual context around each date-like number."""
 
 from pathlib import Path
 import re

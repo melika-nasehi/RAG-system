@@ -1,10 +1,3 @@
-"""Sanity-check source PDFs before they hit the pipeline.
-
-Persian PDFs fail in several unrelated ways, and no single quality score
-separates them. This measures the extracted text, tries the one repair that
-proved out during calibration, and says whether the file is usable.
-"""
-
 from pathlib import Path
 import re
 
@@ -17,26 +10,17 @@ DATA_RAW_DIR = BASE_DIR / "data" / "raw"
 
 BLANK_PAGE_CHARS = 50
 
-# Short tokens hit the 193k-entry vocabulary by chance far too often: garbled
-# text scored 45% on 2-3 letter tokens and 0% once they were dropped.
 MIN_TOKEN_LENGTH = 4
 
-# Below this the ratio is noise rather than signal.
 MIN_TOKENS_TO_JUDGE = 40
 
-# Calibration set: clean documents landed at 58-65%, the one with broken
-# intra-Persian font mapping at 39.7%. 50 sits in the gap.
 MIN_VOCAB_RATIO = 50.0
 
-# Reversing lifted one document from 10.5% to 43.8%. Anything smaller is
-# noise, not evidence of a systematic problem.
 REPAIR_MARGIN = 15.0
 
 PERSIAN = re.compile(r'[\u0600-\u06FF]')
 WHITESPACE = re.compile(r'\s')
 
-# Font-mapping failures produce long alphanumeric runs like "afii62829".
-# Real words in either language don't look like this.
 GARBAGE_TOKEN = re.compile(r'\b[a-zA-Z]{2,}\d{2,}[a-zA-Z0-9]*\b')
 MAX_GARBAGE_RATIO = 1.0
 
@@ -51,11 +35,7 @@ def extract_pages(pdf_path):
 
 
 def vocab_score(text):
-    """Share of substantial tokens that are real Persian words.
 
-    Returns -1 when there's too little text to judge, so callers can tell
-    "bad" apart from "unknown" instead of treating both as zero.
-    """
     tokens = [
         t for t in _tokenizer.tokenize(_normalizer.normalize(text))
         if len(t) >= MIN_TOKEN_LENGTH

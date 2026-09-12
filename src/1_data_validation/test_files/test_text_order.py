@@ -1,11 +1,3 @@
-"""Which transformation makes a document's text read as real Persian?
-
-Two documents in the corpus extract as valid Persian words in the wrong
-order. One reverses the letters inside words, the other reverses the word
-order within a line — different faults needing different fixes. Rather than
-guess, apply each candidate and measure which one raises the share of
-recognised words.
-"""
 
 from pathlib import Path
 
@@ -34,7 +26,6 @@ def vocab_score(text):
 
 
 def reverse_letters(text):
-    """Flip the characters inside each word, keeping word order."""
     return "\n".join(
         " ".join(word[::-1] for word in line.split())
         for line in text.split("\n")
@@ -42,7 +33,6 @@ def reverse_letters(text):
 
 
 def reverse_word_order(text):
-    """Flip the order of words in each line, keeping each word intact."""
     return "\n".join(
         " ".join(reversed(line.split()))
         for line in text.split("\n")

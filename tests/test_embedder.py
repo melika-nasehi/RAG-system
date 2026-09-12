@@ -1,10 +1,4 @@
-"""Unit tests for the embedding layer.
 
-These tests hit the real Ollama model rather than mocking it, because the
-one thing worth verifying here — the asymmetric query/document behaviour —
-only shows up in the actual model's output. A mock would just test that we
-call the mock correctly.
-"""
 
 import pytest
 
@@ -12,7 +6,6 @@ from core.indexing.embedder import embed_documents, embed_query, health_check, V
 
 
 def test_health_check_passes():
-    """Confirms Ollama is reachable and the model returns the expected shape."""
     assert health_check() is True
 
 
@@ -28,10 +21,7 @@ def test_document_vectors_have_correct_dimension():
 
 
 def test_query_prefix_changes_the_vector():
-    """A query and the same text embedded as a document should differ,
-    since the query path prepends an instruction prefix. If this test ever
-    fails, someone has broken the asymmetric encoding that section 11.2 of
-    the notes found necessary for correct ranking."""
+
     text = "شرایط مرخصی تحصیلی"
 
     as_query = embed_query(text)
@@ -41,8 +31,7 @@ def test_query_prefix_changes_the_vector():
 
 
 def test_relevant_passage_scores_higher_than_irrelevant():
-    """Reproduces the core sanity check from the embedding validation phase:
-    a query should be closer to a relevant passage than an irrelevant one."""
+
     query = embed_query("حداکثر تعداد واحد درسی در هر نیمسال چند است؟")
 
     relevant = embed_documents([

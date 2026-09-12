@@ -1,9 +1,3 @@
-"""Sanity-check the built collection before anything relies on it.
-
-A successful write says rows exist, not that they hold the right vectors,
-the right metadata, or vectors that behave sensibly under similarity search.
-Each check below is one thing that could be silently wrong.
-"""
 
 import json
 from pathlib import Path
@@ -37,7 +31,6 @@ def main():
     print(f"  stored    {collection.count()}")
     print(f"  expected  {len(chunks)}")
 
-    # --- every chunk present, none duplicated ---
     stored_ids = collection.get(include=[])["ids"]
     expected_ids = {c["id"] for c in chunks}
 
@@ -47,24 +40,20 @@ def main():
     print(f"  missing   {len(missing)}")
     print(f"  duplicate {duplicated}")
 
-    # --- vectors have the right shape and aren't degenerate ---
     sample = collection.get(limit=5, include=["embeddings", "documents", "metadatas"])
 
     dims = {len(v) for v in sample["embeddings"]}
     print(f"\nvector dims in sample: {dims}")
 
-    # An all-zero or constant vector means the embedding call failed quietly.
     for i, vector in enumerate(sample["embeddings"]):
         magnitude = sum(x * x for x in vector) ** 0.5
         if magnitude < 1e-6:
             print(f"  WARNING: vector {i} is near-zero")
 
-    # --- metadata survived ---
     print("\nsample metadata:")
     for meta in sample["metadatas"][:3]:
         print(f"  {meta}")
 
-    # --- retrieval actually retrieves ---
     questions = [
         "حداکثر تعداد واحد درسی در هر نیمسال چند است؟",
         "شرایط استفاده از مرخصی تحصیلی چیست؟",

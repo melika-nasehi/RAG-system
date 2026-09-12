@@ -1,8 +1,4 @@
-"""Unit tests for cross-encoder reranking.
 
-The reordering logic is tested with a stand-in scorer so it runs without the
-model. One integration test loads the real cross-encoder.
-"""
 
 import pytest
 
@@ -21,7 +17,6 @@ def passage(chunk_id, score=0.5, text=None):
 
 
 class FakeModel:
-    """Returns a fixed logit per passage text, so the expected order is known."""
 
     def __init__(self, logits_by_text):
         self._logits = logits_by_text

@@ -1,4 +1,3 @@
-"""Can the hazm word list separate clean Persian from garbled?"""
 
 from hazm import Normalizer, WordTokenizer, words_list
 
@@ -9,7 +8,6 @@ words = words_list()
 print(f"vocabulary entries: {len(words):,}")
 print(f"first 5 raw entries: {words[:5]}")
 
-# Figure out the shape before assuming it's a flat list of strings.
 vocab = {w[0] if isinstance(w, (tuple, list)) else w for w in words}
 print(f"unique surface forms: {len(vocab):,}")
 print(f"sample: {list(vocab)[:10]}")

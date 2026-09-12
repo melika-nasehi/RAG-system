@@ -1,24 +1,4 @@
-"""Calibrate the retrieval-confidence threshold.
 
-RagChain can refuse a question outright — without an LLM call — when the top
-retrieved passage scores below a cutoff. This script finds that cutoff by
-running the labelled evaluation set through retrieval and looking at where
-the confidence scores of answerable and unanswerable questions sit.
-
-The signal is `Passage.retrieval_score` (the dense cosine, carried unchanged
-through fusion and reranking), aggregated the same way RagChain aggregates
-it: the maximum over the passages that would be sent to the generator.
-
-Two error types, weighed differently:
-
-* false refusal  — an answerable question rejected. The worst outcome: the
-  user had a real question and got nothing. Target zero.
-* false answer   — an unanswerable question passed through to the LLM. Costs
-  a call and risks a confident-sounding wrong answer, but the grounding
-  prompt is the backstop. Tolerable in moderation.
-
-Run:  python -m core.evaluation.calibrate_threshold
-"""
 
 import argparse
 import json
@@ -75,8 +55,7 @@ def sweep(rows, step=0.01):
 
 
 def best_threshold(table):
-    """Highest cutoff that still refuses nothing answerable — i.e. the most
-    unanswerable questions we can catch for free with no false refusals."""
+
     safe = [row for row in table if row["false_refusals"] == 0]
     if not safe:
         return None

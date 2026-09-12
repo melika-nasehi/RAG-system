@@ -1,11 +1,4 @@
-"""One entry point that takes a PDF from file to searchable: validate, chunk,
-embed into the vector store, and append to the chunk file so the BM25 index
-picks it up on its next build.
 
-Both the offline scripts and the Django admin endpoint call `ingest_pdf` —
-the acceptance rules and the chunking parameters live here, not in either
-caller.
-"""
 
 from __future__ import annotations
 
@@ -73,21 +66,11 @@ def ingest_pdf(pdf_path, collection_name: str = DEFAULT_COLLECTION) -> IngestRes
 
 
 def remove_document(source: str, collection_name: str = DEFAULT_COLLECTION) -> int:
-    """The inverse of ingest_pdf: drop every chunk of `source` from the
-    dense index, the sparse index, and the chunk file, so a deleted document
-    stops being retrievable by any of the three without the remaining
-    documents' vectors or BM25 statistics being touched.
 
-    Returns the number of chunk lines removed from the chunk file (0 if the
-    source wasn't there — deleting something already gone is not an error).
-    """
     remove_chunks(source, collection_name)  # dense (Chroma)
     removed = _remove_from_chunk_file(source, collection_name)  # + sparse's input
 
-    # SparseIndex keys its cache on the chunk file's (size, mtime) — which
-    # _remove_from_chunk_file just changed — so the cache below is already
-    # stale and would rebuild on next use regardless. Deleting it too is
-    # just tidiness, not a correctness requirement.
+
     cache = SPARSE_INDEX_DIR / f"{collection_name}.pkl"
     cache.unlink(missing_ok=True)
 
@@ -116,13 +99,7 @@ def _remove_from_chunk_file(source: str, collection_name: str) -> int:
 
 
 def _append_to_chunk_file(chunks: list[dict], collection_name: str) -> None:
-    """Keep the on-disk chunk file in sync with the vector store. Touching it
-    changes its signature, so SparseIndex rebuilds the BM25 index from it on
-    the next query — no explicit invalidation needed.
 
-    Chunk ids already present are skipped, so re-ingesting a document does not
-    duplicate lines.
-    """
     path = CHUNKS_DIR / f"{collection_name}.jsonl"
     path.parent.mkdir(parents=True, exist_ok=True)
 

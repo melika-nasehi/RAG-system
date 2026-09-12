@@ -1,16 +1,4 @@
-"""Compare chunking configurations on retrieval quality alone.
 
-Chunk size mainly affects what gets retrieved, not how well the model writes
-from it — so the choice can be made on retrieval metrics without paying for
-generation. That matters here: a full three-way comparison through the LLM
-is 48 calls, which either exhausts a free-tier quota or takes hours locally.
-Measuring retrieval directly costs neither.
-
-Two metrics, because they answer different questions:
-- hit rate: was the right document retrieved at all?
-- rank of first hit: how far down was it? A hit at position 1 is worth more
-  than a hit at position 4, since the generator sees a fixed top-k window.
-"""
 
 import json
 from pathlib import Path
@@ -29,13 +17,10 @@ CONFIGURATIONS = [
     "chunks_1000_200",
 ]
 
-# Wider than the generator's window, so a document retrieved just outside
-# the top-k still shows up in the rank statistics rather than vanishing.
 SEARCH_DEPTH = 10
 
 
 def first_hit_rank(source_document, passages):
-    """1-based position of the first passage from the expected document."""
     for rank, passage in enumerate(passages, start=1):
         if passage.source == source_document:
             return rank

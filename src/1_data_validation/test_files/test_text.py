@@ -1,4 +1,3 @@
-"""What does pypdf actually see in this file?"""
 
 from pathlib import Path
 

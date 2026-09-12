@@ -1,21 +1,4 @@
-"""Cross-encoder reranking of retrieved candidates.
 
-Bi-encoder retrieval (dense or BM25) scores a query and a passage
-independently and compares the two vectors. A cross-encoder instead reads the
-query and the passage together, so it can weigh how the specific words
-interact — which is exactly what is needed to tell a passage that answers the
-question from one that merely shares its topic.
-
-It is far too slow to run over the whole collection, so it sits after
-retrieval: pull a wide candidate pool cheaply, then let the cross-encoder
-re-order the top 10-20 down to the final few the generator sees.
-
-The model is multilingual (XLM-RoBERTa backbone); the fine-tuning data did
-not include Persian, but the encoder was pretrained on it and the separation
-on this corpus is clean in practice. It is loaded lazily and only when
-reranking is actually switched on, so a deployment that leaves it off never
-pays the import or the download.
-"""
 
 from __future__ import annotations
 
@@ -43,9 +26,7 @@ def _sigmoid(x: float) -> float:
 
 
 class CrossEncoderReranker:
-    """Reorders passages by a cross-encoder relevance score. The score written
-    onto each returned Passage is the sigmoid of the model logit, in (0, 1),
-    so it can be read as a rough relevance probability."""
+
 
     def __init__(self, model_name: str = DEFAULT_MODEL):
         self._model_name = model_name
@@ -79,10 +60,7 @@ class CrossEncoderReranker:
 
 
 class RerankingRetriever:
-    """A retriever wrapper: fetch a wide pool from `base`, then rerank it down.
 
-    Presents the same `search(question, top_k=...)` signature as every other
-    retriever, so RagChain does not know it is there."""
 
     def __init__(self, base, reranker: CrossEncoderReranker | None = None,
                  candidates: int = RERANK_CANDIDATES):

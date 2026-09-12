@@ -1,9 +1,3 @@
-"""Where is the time actually going?
-
-Two hours for 452 short passages on a 0.6B model suggests something other
-than raw model size — likely thread configuration or a per-call overhead
-that dominates at this scale.
-"""
 
 import time
 

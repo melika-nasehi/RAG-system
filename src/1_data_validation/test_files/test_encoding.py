@@ -1,11 +1,4 @@
-"""Diagnostic: is the Persian text in these PDFs stored in logical order?
 
-Some producers emit Arabic Presentation Forms in visual order. Letters still
-read fine, but digit runs come out reversed — 1393/12/16 becomes 3931/21/61.
-That fails silently, so we look for two independent signals: date patterns
-that only validate when reversed, and whether common Persian words survive
-normalisation at all.
-"""
 
 from collections import Counter
 from pathlib import Path
@@ -19,7 +12,6 @@ CALIBRATION_DIR = BASE_DIR / "data" / "calibration_data"
 
 DATE_PATTERN = re.compile(r'([\u0660-\u0669\u06F0-\u06F9\d]{1,4})/([\u0660-\u0669\u06F0-\u06F9\d]{1,2})/([\u0660-\u0669\u06F0-\u06F9\d]{1,4})')
 
-# Frequent enough that a Persian document without them is suspect.
 COMMON_WORDS = ["است", "این", "که", "از", "در", "ماده", "تبصره", "می", "را", "به"]
 
 JALALI_MIN_YEAR = 1300
@@ -48,11 +40,6 @@ def is_valid_jalali(year, month, day):
 
 
 def check_date(parts):
-    """Try a three-part number group as a date, forwards and reversed.
-
-    Returns 'forward', 'reversed', 'both' or None. Iranian dates appear as
-    year/month/day and day/month/year, so both orderings are tried.
-    """
     try:
         a, b, c = (int(to_ascii_digits(p)) for p in parts)
     except ValueError:
@@ -97,8 +84,6 @@ def probe(pdf_path):
         v for v in (check_date(m) for m in DATE_PATTERN.findall(text)) if v
     )
 
-    # NFKC folds presentation forms back to base letters, so word matching
-    # works on either encoding.
     folded = unicodedata.normalize("NFKC", text)
     word_hits = sum(folded.count(w) for w in COMMON_WORDS)
 

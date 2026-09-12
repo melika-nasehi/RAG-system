@@ -1,13 +1,3 @@
-"""Split validated PDFs into chunks and write them out for embedding.
-
-Two repairs happen before splitting. Text normalisation folds the Arabic and
-Persian forms of the same letters together, and digit reversal fixes files
-whose Persian numerals came out backwards — but only where a date test shows
-the file actually needs it.
-
-Output filenames carry the chunk parameters, so several configurations can
-sit side by side and be compared once retrieval exists to measure them.
-"""
 
 import argparse
 import json
@@ -25,12 +15,8 @@ CHUNKS_DIR = BASE_DIR / "data" / "chunks"
 DEFAULT_CHUNK_SIZE = 750
 DEFAULT_CHUNK_OVERLAP = 200
 
-# A chunk this short carries no usable context — usually a page-number
-# fragment left over at a page boundary.
 MIN_CHUNK_LENGTH = 100
 
-# Tried in order; the splitter only falls through when a piece still exceeds
-# the size limit.
 SEPARATORS = ["\n\n", "\n", "؟", ".", "،", " ", ""]
 
 PERSIAN_DIGIT_RUN = re.compile(r'[۰-۹]{2,}')
@@ -73,11 +59,6 @@ def count_valid_dates(text):
 
 
 def needs_digit_repair(text):
-    """Whether reversing Persian digits makes more dates parse.
-
-    Applying the reversal unconditionally would corrupt files that were
-    already correct, so it has to earn its way in per document.
-    """
     return count_valid_dates(reverse_persian_digits(text)) > count_valid_dates(text)
 
 

@@ -1,14 +1,4 @@
-"""Surface passages likely to yield a checkable evaluation question.
 
-Evaluating retrieval quality needs questions whose answers are already known,
-and those answers have to come from the documents rather than from whoever is
-writing the test — otherwise the system gets graded against answers derived
-the same way it derives its own.
-
-So this scans the corpus for sentences that state a rule with a definite
-value, and proposes them. A human turns each one into a question and copies
-the reference answer from the source. Nothing here writes either side.
-"""
 
 from pathlib import Path
 import re
@@ -20,8 +10,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_RAW_DIR = BASE_DIR / "data" / "raw"
 OUTPUT_FILE = BASE_DIR / "data" / "question_candidates.md"
 
-# Below this a sentence rarely carries a complete rule; above it, several
-# rules run together and the reference answer stops being unambiguous.
 MIN_SENTENCE_LENGTH = 60
 MAX_SENTENCE_LENGTH = 400
 
@@ -29,20 +17,13 @@ CANDIDATES_PER_DOCUMENT = 12
 
 DIGITS = re.compile(r'[۰-۹0-9]')
 
-# Vocabulary marking a binding rule rather than description.
 CONSTRAINT_WORDS = [
     "حداکثر", "حداقل", "بیش از", "کمتر از", "موظف", "ممنوع",
     "مجاز", "الزامی", "نباید", "باید", "مشروط", "معادل",
 ]
 
-# Contents pages pair page numbers with rule vocabulary and score well
-# despite carrying no content. What marks them is a long unbroken run of
-# leader dots — a single "و …" inside a list of examples is ordinary prose.
 DOT_LEADER = re.compile(r'(?:[.…]\s*){6,}')
 
-# A rule states one or two values. Anything denser is a table that lost its
-# column structure during extraction — the values survive but their labels
-# don't, so the reference answer can't be trusted.
 MAX_DIGIT_DENSITY = 0.18
 
 _normalizer = Normalizer()
@@ -69,8 +50,6 @@ def score_sentence(sentence):
     if digit_count == 0 or constraint_count == 0:
         return 0
 
-    # Constraint words weigh double: digits alone are as often a reference
-    # number as a limit.
     return digit_count + constraint_count * 2
 
 

@@ -1,16 +1,4 @@
-"""Dense and lexical retrieval, combined.
 
-Each retriever is strong where the other is weak: embeddings match on meaning
-across different wording, BM25 matches exact terms the embedding model would
-smooth over. Reciprocal Rank Fusion combines their two rankings without
-needing their scores to be comparable — a passage's contribution depends
-only on its position in each list, so a cosine similarity and a BM25 score
-never have to be put on the same scale.
-
-The public shape is identical to the dense Retriever: `search(question,
-top_k=...)` returns a list of Passage, best first. RagChain does not know or
-care which retriever it holds.
-"""
 
 from __future__ import annotations
 

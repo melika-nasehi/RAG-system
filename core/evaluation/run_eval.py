@@ -1,19 +1,4 @@
-"""Run the evaluation set through the full RAG chain and score each answer.
 
-Module form of src/evaluation/run_eval.py, with two additions the backend
-comparison needs: per-question latency, and the backend/retriever config
-recorded in the output.
-
-Four things are measured, because they fail independently:
-
-* retrieval hit   — was the source document retrieved at all?
-* keyword coverage — do the numbers and key phrases of the reference answer
-  appear in the generated one? A pre-score for human review, not a verdict.
-* refusal          — for unanswerable questions, did the system decline?
-* latency          — wall-clock seconds for the whole ask().
-
-Run:  LLM_BACKEND=ollama python -m core.evaluation.run_eval --tag ollama
-"""
 
 import argparse
 import json
@@ -29,8 +14,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 EVAL_SET = BASE_DIR / "data" / "evaluation_set.json"
 RESULTS_DIR = BASE_DIR / "data" / "eval_results"
 
-# Phrases the model uses to decline — checked against generated text to score
-# refusal behaviour on unanswerable questions.
 REFUSAL_MARKERS = [
     "اطلاعاتی", "وجود ندارد", "یافت نشد", "نمی‌دانم", "نمیدانم",
     "ذکر نشده", "موجود نیست", "پاسخی", "مشخص نشده",
@@ -43,8 +26,7 @@ MIN_KEYWORD_LENGTH = 5
 
 
 def strip_thinking(text: str) -> str:
-    """Qwen3 emits <think>…</think> before the answer when Ollama does not
-    split it off. It must not count toward coverage or refusal detection."""
+
     return _THINK.sub("", text).strip()
 
 
@@ -158,10 +140,6 @@ def main():
     name = f"eval_{args.tag}.json" if args.tag else "eval.json"
     out_path = RESULTS_DIR / name
 
-    # Written after every question, not just at the end — a slow local model
-    # means this can run for a long time, and a run stopped partway (Ctrl-C,
-    # or the machine needed for something else) should still leave usable
-    # partial results instead of nothing.
     results = []
 
     def flush_partial():

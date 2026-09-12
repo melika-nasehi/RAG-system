@@ -19,26 +19,17 @@ from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# The same .env core/ reads (core/generation/generator.py has its own tiny
-# loader to avoid a dependency there; python-dotenv is already installed
-# here via requirements.txt, so Django just uses it directly). One file at
-# the project root holds every secret — API keys and DB credentials alike —
-# instead of secrets being hardcoded per-app.
+
 load_dotenv(BASE_DIR.parent / ".env")
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-fzhnzw53)l*np82wf2iqps!hm+43wb$*1mcuk6y0)g*qkm2*s-'
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# DEBUG=True already makes Django accept localhost/127.0.0.1/[::1] even with
-# this empty — the env var is an escape hatch for a host that shows up under
-# unusual local routing (a VPN's virtual adapter, e.g.) without a code change.
 ALLOWED_HOSTS = [
     h.strip() for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",") if h.strip()
 ]

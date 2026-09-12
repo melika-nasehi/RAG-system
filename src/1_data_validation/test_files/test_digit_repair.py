@@ -1,12 +1,4 @@
-"""Does reversing Persian digit runs make a document's dates parse?
 
-Some exports lay out Persian-Indic digits in visual order, so ۱۴۰۳ comes
-back as ۳۰۴۱. Latin digits in the same file survive intact, which is the
-clue: the fix has to target one and leave the other alone.
-
-Applying it blindly would corrupt files that were fine. So this measures how
-many dates parse before and after, and only a clear gain counts as evidence.
-"""
 
 from pathlib import Path
 import re
@@ -35,7 +27,6 @@ def to_ascii(s):
 
 
 def reverse_persian_digits(text):
-    """Flip Persian digit runs, leaving Latin digits and letters untouched."""
     return PERSIAN_DIGIT_RUN.sub(lambda m: m.group()[::-1], text)
 
 
@@ -44,7 +35,6 @@ def valid_date(a, b, c):
 
 
 def count_valid(text):
-    """Dates that parse as real Jalali dates, either ordering."""
     hits = 0
 
     for parts in DATE_LIKE.findall(text):

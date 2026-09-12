@@ -1,15 +1,4 @@
-"""The single place that knows which language model answers, and how to reach it.
 
-Two backends behind one interface: a hosted API for development speed, and
-Ollama for the local deployment the project is ultimately delivered on.
-Switching is a config change, not a rewrite — the same separation that let the
-embedding layer move from PyTorch to Ollama without touching anything upstream.
-
-Temperature is deliberately near zero. The usual recommendation for this model
-family is 0.7, tuned for open-ended chat; here the job is to restate what a
-regulation says, where invention is the failure mode and reproducibility
-matters for evaluation.
-"""
 
 import os
 from pathlib import Path
@@ -17,7 +6,8 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # "gemini" while developing, "ollama" for the local deliverable.
-BACKEND = os.getenv("LLM_BACKEND", "gemini")
+#BACKEND = os.getenv("LLM_BACKEND", "gemini")
+BACKEND = os.getenv("LLM_BACKEND", "ollama")
 
 GEMINI_MODEL = "gemini-3.5-flash-lite"
 OLLAMA_MODEL = "qwen3:4b"
@@ -27,11 +17,7 @@ AGENTROUTER_BASE_URL = "https://agentrouter.org/v1"
 
 TEMPERATURE = 0.1
 
-# How long Ollama keeps qwen3:4b resident after a reply. This machine is not
-# sized for a 4B model sitting in memory indefinitely, and the real usage
-# pattern is one question at a time with gaps between them, not a batch —
-# so it is better to pay a reload on the next question than hold the model
-# hostage. Override with OLLAMA_KEEP_ALIVE if this runs on stronger hardware.
+
 OLLAMA_KEEP_ALIVE = os.getenv("OLLAMA_KEEP_ALIVE", "5m")
 
 

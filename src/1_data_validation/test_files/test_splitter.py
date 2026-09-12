@@ -1,9 +1,4 @@
-"""Can dynamic-programming segmentation recover words that lost their spaces?
 
-Fixed-width chopping fails because word boundaries don't fall on a grid.
-This tries every possible split and keeps the one that produces the most
-plausible sequence of real words.
-"""
 
 from functools import lru_cache
 from math import log
@@ -13,17 +8,12 @@ from hazm import words_list
 _frequency = {entry[0]: entry[1] for entry in words_list()}
 _total = sum(_frequency.values())
 
-# Persian words rarely run past this. Allowing more lets the segmenter
-# swallow a whole run as one "word" and call it done.
 MAX_WORD_LENGTH = 12
 
-# Squared so that leaving a long run unsegmented is always worse than any
-# sequence of real words. A linear penalty loses to a three-word split.
 UNKNOWN_PENALTY = 25.0
 
 
 def word_cost(word):
-    """Negative log probability — rarer words cost more, unknown words most."""
     freq = _frequency.get(word, 0)
     if freq == 0:
         return UNKNOWN_PENALTY + len(word) ** 2
@@ -31,7 +21,6 @@ def word_cost(word):
 
 
 def segment(run):
-    """Split a space-less run into the cheapest sequence of words."""
 
     @lru_cache(maxsize=None)
     def best(start):
@@ -63,7 +52,6 @@ SAMPLES = [
     "دراینبخشبهمواردزیراشارهمی",
     "نکاتمهمدرمطالعهودرکمطالبکتاب",
     "عنوانفصلاول",
-    # Garbled text — should not segment into anything sensible.
     "کدراندسی",
     "مفظدهقر",
     "نظدوو",

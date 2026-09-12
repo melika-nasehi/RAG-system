@@ -1,21 +1,4 @@
-"""Compare retrieval strategies on the evaluation set.
 
-Retrieval quality can be measured without paying for generation: chunk size,
-dense vs hybrid, reranking — all of it changes *what* is retrieved, and that
-is scorable directly against the labelled evaluation set.
-
-Two families of question are scored differently:
-
-* answerable — was the expected source document retrieved, and at what rank?
-  A hit at position 1 is worth more than one at position 4, because the
-  generator only ever sees the top-k window.
-
-* unanswerable — there is no document to hit. What matters is the top score,
-  because that is the signal a confidence threshold would use to refuse. The
-  scores are recorded here so that threshold can be calibrated later.
-
-Run:  python -m core.evaluation.compare_retrieval
-"""
 
 import argparse
 import json
@@ -27,11 +10,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 EVAL_SET = BASE_DIR / "data" / "evaluation_set.json"
 RESULTS_DIR = BASE_DIR / "data" / "eval_results"
 
-# Wider than the generator's top-k, so a document retrieved just outside the
-# window still shows up in the rank statistics instead of vanishing.
 SEARCH_DEPTH = 10
 
-# A "+rerank" suffix wraps the base mode in the cross-encoder stage.
 MODES = ("dense", "hybrid", "dense+rerank", "hybrid+rerank")
 
 
@@ -46,7 +26,6 @@ def load_eval_set():
 
 
 def first_hit_rank(source_document, passages):
-    """1-based position of the first passage from the expected document."""
     for rank, passage in enumerate(passages, start=1):
         if passage.source == source_document:
             return rank
@@ -137,8 +116,6 @@ def main():
             row += f"{_fmt(summaries[mode][metric]):>15}"
         print(row)
 
-    # Per-question rank movement between the first two modes, so a regression
-    # is visible and not hidden inside an average.
     if len(args.modes) >= 2:
         left, right = args.modes[0], args.modes[1]
         print(f"\nper-question first-hit rank — {left} vs {right} (answerable only):")

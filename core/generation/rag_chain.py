@@ -1,12 +1,4 @@
-"""Question in, grounded answer out.
 
-This is the thin layer that connects retrieval to generation. It stays thin
-on purpose: retrieval quality and answer quality are separate failure modes,
-and keeping the seam visible is what lets them be diagnosed apart. The result
-carries the passages that produced it, so a wrong answer can always be traced
-back to whether the wrong passages were fetched or the right ones were
-misread.
-"""
 
 from dataclasses import dataclass
 import os
@@ -15,11 +7,8 @@ from core.generation.generator import active_backend, generate
 from core.generation.prompts import SYSTEM_PROMPT, build_user_message
 from core.retrieval.retriever import DEFAULT_TOP_K, build_retriever
 
-# Said when retrieval turns up nothing at all — a broken or empty collection.
 NO_PASSAGES_MESSAGE = "هیچ متنی برای پاسخ‌گویی یافت نشد."
 
-# Said when passages were retrieved but none scored above the confidence
-# threshold: most likely the question is outside what the regulations cover.
 LOW_CONFIDENCE_MESSAGE = (
     "متن مرتبطی برای پاسخ به این پرسش در آیین‌نامه‌های موجود یافت نشد."
 )
@@ -27,18 +16,14 @@ LOW_CONFIDENCE_MESSAGE = (
 
 @dataclass(frozen=True)
 class Answer:
-    """A generated answer alongside everything it was derived from."""
 
     question: str
     text: str
     passages: tuple
     backend: str
-    # True when the chain declined to answer without calling the model —
-    # empty retrieval, or a top score below the confidence threshold.
     refused: bool = False
 
     def sources(self):
-        """Unique citations, in the order the passages were ranked."""
         seen = []
         for passage in self.passages:
             citation = passage.citation()
@@ -48,8 +33,7 @@ class Answer:
 
 
 def _resolve_min_score(explicit):
-    """Threshold precedence: explicit argument, then MIN_RETRIEVAL_SCORE, then
-    off. 0 or a negative value also means off."""
+
     if explicit is not None:
         return explicit if explicit > 0 else None
     raw = os.getenv("MIN_RETRIEVAL_SCORE", "").strip()
@@ -95,10 +79,7 @@ class RagChain:
                 refused=True,
             )
 
-        # Confidence gate. `retrieval_score` is the dense cosine, carried
-        # unchanged through fusion/reranking, so this comparison means the
-        # same thing whatever the pipeline. Below the threshold, refuse here
-        # rather than spend an LLM call on passages that don't answer.
+
         if self._min_score is not None:
             confidence = max((p.retrieval_score for p in passages), default=0.0)
             if confidence < self._min_score:

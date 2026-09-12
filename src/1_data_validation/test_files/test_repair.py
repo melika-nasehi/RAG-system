@@ -1,10 +1,4 @@
-"""Compare a document's numbers before and after digit reversal.
 
-The date test only proves dates get fixed. Most numbers in a regulatory
-corpus aren't dates — credit limits, article numbers, grade thresholds — and
-there's no way to validate those automatically, since 24 and 42 are both
-plausible. So this puts them side by side for a human to judge.
-"""
 
 from pathlib import Path
 import re
@@ -16,8 +10,6 @@ TARGET = BASE_DIR / "data" / "raw" / "education-7731-education1402-final.pdf"
 
 PERSIAN_DIGIT_RUN = re.compile(r'[۰-۹]{2,}')
 
-# Numbers that carry a rule, not a date. These are what the reversal has to
-# get right for the corpus to be usable.
 CONTEXT_WORDS = ["واحد", "ماده", "نمره", "نیمسال", "درصد", "سنوات", "حداکثر", "حداقل"]
 
 

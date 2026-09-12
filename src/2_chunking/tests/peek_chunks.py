@@ -1,9 +1,4 @@
-"""Read the actual chunks, not just their statistics.
 
-Chunk counts and mean sizes look fine long after a splitter has started
-cutting mid-sentence or dropping the context a passage needs. The only way
-to catch that is to read the output.
-"""
 
 from pathlib import Path
 import sys
@@ -23,7 +18,6 @@ TARGET = BASE_DIR / "data" / "raw" / "education-7731-education1402-final.pdf"
 
 
 def show_boundary(chunks, index):
-    """Print two consecutive chunks so the overlap between them is visible."""
     first, second = chunks[index], chunks[index + 1]
 
     print(f"\n{'=' * 70}")

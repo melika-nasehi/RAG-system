@@ -1,11 +1,4 @@
-"""Build a persistent Chroma collection from a chunk file.
 
-Embedding goes through the shared embedder module rather than calling Ollama
-directly, so the document/query asymmetry stays defined in one place.
-
-Runs are resumable: chunks already present in the collection are skipped, and
-vectors are committed in batches so an interruption costs at most one batch.
-"""
 
 import argparse
 import json
@@ -21,8 +14,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 CHUNKS_DIR = BASE_DIR / "data" / "chunks"
 STORE_DIR = BASE_DIR / "data" / "vector_store"
 
-# Ollama accepts a list and batches internally; this bounds how much work an
-# interruption throws away, and how much sits in memory before a write.
 BATCH_SIZE = 32
 
 
@@ -43,13 +34,11 @@ def open_collection(client, name, reset):
 
     return client.create_collection(
         name=name,
-        # Vectors from this model are compared by angle, not magnitude.
         metadata={"hnsw:space": "cosine", "embedding_model": MODEL_NAME},
     )
 
 
 def pending_chunks(collection, chunks):
-    """Chunks not already stored, so a rerun resumes instead of duplicating."""
     if collection.count() == 0:
         return chunks
 
@@ -109,8 +98,6 @@ def main():
 
     health_check()
 
-    # Collection name mirrors the chunk config, so several configurations can
-    # sit side by side and be compared once retrieval exists.
     collection = build(chunks_file, chunks_file.stem, args.reset)
 
     print(f"\n'{chunks_file.stem}' holds {collection.count()} vectors")

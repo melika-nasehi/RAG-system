@@ -1,16 +1,4 @@
-"""Decide whether a source PDF is usable before it enters the pipeline.
 
-Persian PDFs fail in several unrelated ways and no single score separates
-them, so this checks a few independent signals: is there extractable text at
-all, is the font mapped to Latin placeholders, and are enough of the
-substantial tokens real Persian words. It also detects the one repairable
-fault — words extracted in reversed order — and reports it rather than
-rejecting outright.
-
-This is the module form of what src/1_data_validation/inspect_data.py did as
-a script; the thresholds are the ones calibrated there and must not drift
-without re-calibration.
-"""
 
 from __future__ import annotations
 
@@ -23,22 +11,15 @@ from pypdf import PdfReader
 
 BLANK_PAGE_CHARS = 50
 
-# Short tokens hit the 193k-entry vocabulary by chance far too often: garbled
-# text scored 45% on 2-3 letter tokens and 0% once they were dropped.
 MIN_TOKEN_LENGTH = 4
 MIN_TOKENS_TO_JUDGE = 40
 
-# Calibration set: clean documents landed at 58-65%, the one with broken
-# intra-Persian font mapping at 39.7%. 50 sits in the gap.
 MIN_VOCAB_RATIO = 50.0
 
-# Reversing lifted one document from 10.5% to 43.8%. Anything smaller is
-# noise, not evidence of a systematic problem.
 REPAIR_MARGIN = 15.0
 
 MIN_CHARS_PER_PAGE = 100
 
-# Font-mapping failures produce long alphanumeric runs like "afii62829".
 GARBAGE_TOKEN = re.compile(r"\b[a-zA-Z]{2,}\d{2,}[a-zA-Z0-9]*\b")
 MAX_GARBAGE_RATIO = 1.0
 
@@ -52,11 +33,7 @@ _vocabulary = {entry[0] for entry in words_list()}
 
 @dataclass(frozen=True)
 class ValidationResult:
-    """Outcome of validating one PDF.
 
-    `accepted` is True for verdicts ACCEPT and REPAIR (the latter is usable
-    once the pipeline applies the named repair); False for REJECT.
-    """
 
     accepted: bool
     verdict: str  # "ACCEPT" | "REPAIR" | "REJECT"
@@ -82,8 +59,7 @@ def _extract_pages(pdf_path: Path) -> list[str]:
 
 
 def _vocab_score(text: str) -> float:
-    """Share of substantial tokens that are real Persian words, or -1 when
-    there is too little text to judge."""
+
     tokens = [
         token
         for token in _tokenizer.tokenize(_normalizer.normalize(text))

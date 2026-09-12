@@ -1,16 +1,9 @@
-"""Does the query instruction still matter when going through Ollama?
 
-sentence-transformers applies Qwen3's query prefix via prompt_name. Ollama's
-API takes a bare input string, so either it applies the prefix internally or
-it doesn't apply one at all — and getting that wrong degrades retrieval
-without raising anything.
-"""
 
 import ollama
 
 MODEL = "qwen3-embedding:0.6b"
 
-# The prefix sentence-transformers reports for this model's "query" prompt.
 QUERY_PREFIX = (
     "Instruct: Given a web search query, retrieve relevant passages "
     "that answer the query\nQuery:"

@@ -1,10 +1,4 @@
-"""Unit tests for the ingestion pipeline (validate -> chunk -> index).
 
-Validation and chunking run against the real PDFs in data/raw — they are
-local and fast, and the whole point is that the acceptance rules behave on
-actual documents. Only the embedding/indexing step is stubbed, since that
-needs Ollama and a Chroma write.
-"""
 
 import json
 from pathlib import Path
@@ -155,19 +149,11 @@ def test_remove_document_deletes_only_its_own_lines(tmp_path, monkeypatch):
 
 
 def test_remove_document_makes_the_sparse_index_stop_finding_it(tmp_path, monkeypatch):
-    """The specific regression this is guarding against: the sparse index is
-    a pickled cache keyed on the chunk file's (size, mtime). If removal
-    rewrote the chunk file but the stale .pkl survived, a query that used to
-    match only the deleted document would keep matching it forever. This
-    goes through the real SparseIndex, not a mock, to prove the cache
-    actually gets invalidated end to end."""
+
     from core.retrieval import sparse as sparse_module
     from core.retrieval.sparse import SparseIndex
 
-    # A collection name distinct from any real one, and the sparse cache
-    # directory pointed at tmp_path too — otherwise SparseIndex.load()'s own
-    # cache (keyed only by filename, from its module-level INDEX_DIR) would
-    # read or write the real project's data/sparse_index/, not this test's.
+
     collection_name = "test_remove_doc_sparse"
     chunk_file = tmp_path / f"{collection_name}.jsonl"
     _write_chunk_file(
@@ -179,10 +165,7 @@ def test_remove_document_makes_the_sparse_index_stop_finding_it(tmp_path, monkey
                 "source": "unique.pdf",
                 "page": 1,
             },
-            # Two unrelated documents, so the query term sits in a strict
-            # minority of the corpus (1 of 3) — with it in exactly half
-            # (1 of 2), rank_bm25's IDF term lands on precisely zero, an
-            # edge case of the *test's* tiny corpus, not of remove_document.
+
             {
                 "id": "other_p1_c0",
                 "text": "مقررات عمومی ثبت‌نام و انتخاب واحد دانشجویان " * 3,

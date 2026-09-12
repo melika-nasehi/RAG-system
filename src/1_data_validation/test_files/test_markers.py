@@ -1,4 +1,3 @@
-"""Which markers matched, and where did they come from?"""
 
 from pathlib import Path
 import re

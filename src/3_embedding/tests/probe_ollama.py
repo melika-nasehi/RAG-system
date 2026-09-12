@@ -1,9 +1,4 @@
-"""Measure Ollama embedding throughput call by call, not just averaged.
 
-The first probe showed a huge spread (0.05s to 13.7s) on identical calls.
-Printing each one separately shows whether that's warm-up cost or something
-that recurs.
-"""
 
 import time
 

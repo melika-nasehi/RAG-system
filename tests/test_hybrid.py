@@ -1,9 +1,3 @@
-"""Unit tests for hybrid (dense + BM25) retrieval and its RRF fusion.
-
-The fusion logic is tested with hand-built dense/sparse inputs so the maths
-is checked exactly and without touching Ollama or the index. One integration
-test at the end exercises the real thing.
-"""
 
 import pytest
 
@@ -52,8 +46,7 @@ def make_hybrid(dense_ids, sparse_ids, **kwargs):
 
 
 def test_agreement_between_retrievers_beats_a_single_top_hit():
-    """A passage ranked 2nd by both retrievers should outrank one ranked 1st
-    by only one of them — the whole reason to fuse two rankings."""
+
     hybrid = make_hybrid(dense_ids=["A", "B", "C"], sparse_ids=["D", "B", "E"], rrf_k=1)
     ranked = [p.chunk_id for p in hybrid.search("q", top_k=3)]
 
@@ -79,8 +72,7 @@ def test_results_are_ordered_by_descending_fused_score():
 
 
 def test_sparse_only_hit_still_becomes_a_passage_with_provenance():
-    """A chunk the dense side never saw must still come back as a fully
-    formed Passage, built from the sparse hit's metadata."""
+
     hybrid = HybridRetriever(
         dense=FakeDense([passage("A")]),
         sparse=FakeSparse([hit("Z", source="غیبت.pdf", page=4)]),
@@ -102,8 +94,7 @@ def test_reported_score_is_the_fused_score_not_a_leftover():
 
 
 def test_search_signature_matches_the_dense_retriever():
-    """RagChain calls search(question, top_k=...) — hybrid must accept the
-    exact same call the dense Retriever does."""
+
     hybrid = make_hybrid(["A", "B"], ["B", "C"])
     assert hybrid.search("q", top_k=2)
     assert hybrid.search("q") == hybrid.search("q", top_k=4)

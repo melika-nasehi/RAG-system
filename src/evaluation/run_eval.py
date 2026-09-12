@@ -1,19 +1,4 @@
-"""Run the evaluation set against the full RAG chain and score the result.
 
-Three things are measured separately, because they fail independently:
-
-- retrieval hit: did the source document even get retrieved? If not, no
-  amount of generation quality can produce a correct answer.
-- keyword coverage: an automatic pre-score, not a verdict — it checks
-  whether the numbers and key phrases from the reference answer appear in
-  the generated one. Free-text answers can't be graded exactly by a script.
-- refusal correctness: for unanswerable questions, did the system decline
-  rather than construct an answer from loosely related passages?
-
-Keyword coverage is a signal to guide human review, not a substitute for it.
-A score is written next to each answer so reviewing 15 items means reading
-them, not re-deriving the numbers.
-"""
 
 import json
 import re
@@ -27,8 +12,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 EVAL_SET = BASE_DIR / "data" / "evaluation_set.json"
 RESULTS_DIR = BASE_DIR / "data" / "eval_results"
 
-# Phrases the model uses to decline — checked against generated text to
-# score refusal behaviour on unanswerable questions.
 REFUSAL_MARKERS = [
     "اطلاعاتی", "وجود ندارد", "یافت نشد", "نمی‌دانم", "نمیدانم",
     "ذکر نشده", "موجود نیست", "پاسخی", "مشخص نشده",
@@ -36,14 +19,10 @@ REFUSAL_MARKERS = [
 ]
 
 NUMBER = re.compile(r'[۰-۹0-9]+')
-# Words long enough that matching them isn't coincidence — the same
-# threshold used for the vocabulary check during data validation.
 MIN_KEYWORD_LENGTH = 5
 
 
 def extract_keywords(reference):
-    """Numbers and long words from a reference answer — the concrete details
-    an answer has to reproduce to be checking the same fact."""
     numbers = set(NUMBER.findall(reference))
     words = {w for w in re.findall(r'[\u0600-\u06FF]+', reference) if len(w) >= MIN_KEYWORD_LENGTH}
     return numbers | words

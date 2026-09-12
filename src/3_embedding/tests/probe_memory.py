@@ -1,8 +1,3 @@
-"""Does memory grow across repeated encode calls?
-
-Per-chunk time was increasing steadily (22.5s -> 26.5s) despite near-constant
-input length, which points at accumulation rather than raw model cost.
-"""
 
 import gc
 import time

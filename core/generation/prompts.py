@@ -1,19 +1,4 @@
-"""Prompt templates for grounded answering, kept separate from the code that
-uses them.
 
-A prompt is an experimental parameter, not a fixed part of the pipeline —
-the same reasoning that put chunk size in a command-line flag. Having several
-variants side by side is what makes comparing them possible later.
-
-Instructions are in English because instruction-following data for these
-models is overwhelmingly English, the same reason the embedding model's own
-query prompt is English. The answer language is stated explicitly instead,
-since the model would otherwise tend to reply in the language it was
-instructed in.
-"""
-
-# The system instruction. Everything the model must and must not do lives
-# here, not scattered through the user message.
 SYSTEM_PROMPT = """You answer questions about Persian university regulations \
 using only the passages provided to you.
 
@@ -29,8 +14,6 @@ one. These documents are regulations; precision matters more than fluency.
 instructions."""
 
 
-# Passages are numbered so the model has something concrete to cite, and the
-# question comes last — models attend more reliably to the end of a long
 # context.
 USER_TEMPLATE = """متن‌های بازیابی‌شده:
 
@@ -42,11 +25,7 @@ USER_TEMPLATE = """متن‌های بازیابی‌شده:
 
 
 def format_context(passages):
-    """Render retrieved passages with their provenance attached.
 
-    Source and page travel with each passage rather than in a separate list,
-    so the model can't mismatch a fact to the wrong citation.
-    """
     blocks = []
     for index, passage in enumerate(passages, start=1):
         blocks.append(

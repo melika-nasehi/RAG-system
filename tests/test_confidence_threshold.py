@@ -1,12 +1,4 @@
-"""Unit tests for the retrieval-confidence gate in RagChain.
 
-The gate refuses a question — without an LLM call — when the top retrieved
-passage's dense score is below a threshold. These tests use a fake retriever
-and a stubbed generator, so the two failure modes can be checked directly:
-
-* false refusal — an answerable question wrongly rejected
-* false answer  — an unanswerable question wrongly passed to the LLM
-"""
 
 import pytest
 
@@ -36,8 +28,7 @@ def make_passage(retrieval_score, chunk_id="c1"):
 
 @pytest.fixture
 def spy_generate(monkeypatch):
-    """Replaces generate() with a counter, so a test can assert whether the
-    LLM was reached at all."""
+
     calls = []
 
     def fake_generate(system_prompt, user_message, backend=None):
@@ -58,8 +49,7 @@ def test_gate_disabled_by_default_answers_even_a_low_score(spy_generate):
 
 
 def test_below_threshold_refuses_without_calling_the_llm(spy_generate):
-    """The false-answer guard: an unanswerable question (low score) must be
-    refused here, not sent to the model."""
+
     chain = RagChain(retriever=FakeRetriever([make_passage(0.43)]), min_score=0.55)
     answer = chain.ask("هزینه غذای سلف چقدر است؟")
 
@@ -70,8 +60,7 @@ def test_below_threshold_refuses_without_calling_the_llm(spy_generate):
 
 
 def test_above_threshold_answers_normally(spy_generate):
-    """The false-refusal guard: an answerable question (adequate score) must
-    reach the model."""
+
     chain = RagChain(retriever=FakeRetriever([make_passage(0.72)]), min_score=0.55)
     answer = chain.ask("مدت مرخصی زایمان چقدر است؟")
 
@@ -86,8 +75,7 @@ def test_score_exactly_at_threshold_is_allowed(spy_generate):
 
 
 def test_confidence_is_the_max_over_returned_passages(spy_generate):
-    """A weak passage at rank 1 should not sink the whole result if a
-    stronger one is also in the window."""
+
     chain = RagChain(
         retriever=FakeRetriever([make_passage(0.30, "a"), make_passage(0.61, "b")]),
         min_score=0.55,

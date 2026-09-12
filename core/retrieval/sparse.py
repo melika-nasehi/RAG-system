@@ -1,17 +1,4 @@
-"""Lexical (BM25) retrieval over the same chunks the dense index was built from.
 
-Dense embeddings miss when the question and the regulation share no
-vocabulary — a rare term, an exact article number, a phrasing the embedding
-model never saw paired with this topic. The evaluation set does not expose
-this (dense already scores a perfect hit rate on it), but the probe notes
-do: "اگر سر کلاس نروم چه اتفاقی می‌افتد؟" fell below every threshold because
-it is worded nothing like the attendance regulation. BM25 recovers exactly
-that case.
-
-The index is built from the chunk file rather than the Chroma collection, so
-it stays independent of the embedding pipeline. It is pickled next to the
-vector store and rebuilt only when the chunk file changes.
-"""
 
 from __future__ import annotations
 
@@ -28,15 +15,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 CHUNKS_DIR = BASE_DIR / "data" / "chunks"
 INDEX_DIR = BASE_DIR / "data" / "sparse_index"
 
-# Bumped whenever the tokeniser or stored shape changes, so a stale pickle is
-# rebuilt instead of silently misread.
 _FORMAT_VERSION = 1
 
 
 @dataclass(frozen=True)
 class SparseHit:
-    """A BM25 match, carrying the same provenance a dense Passage does so the
-    two can be fused without a lookup back to the store."""
+
 
     chunk_id: str
     text: str
@@ -54,8 +38,7 @@ class SparseIndex:
 
     @classmethod
     def for_collection(cls, collection_name: str) -> "SparseIndex":
-        """Load (or build) the index for the chunk file whose stem matches the
-        Chroma collection name — the same convention build_index.py uses."""
+
         return cls.load(CHUNKS_DIR / f"{collection_name}.jsonl")
 
     @classmethod
@@ -94,8 +77,7 @@ class SparseIndex:
         return len(self._records)
 
     def search(self, question: str, top_k: int = 4) -> list[SparseHit]:
-        """The top_k passages by BM25 score, best first. Passages with a
-        zero score (no query term present) are dropped rather than padded in."""
+
         scores = self._bm25.get_scores(tokenize(question))
         ranked = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)
 

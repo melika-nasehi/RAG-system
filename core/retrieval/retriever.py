@@ -1,14 +1,4 @@
-"""Retrieve the passages most relevant to a question.
 
-This is deliberately independent of answer generation: it takes a question
-and returns passages with their scores and provenance, nothing more. Keeping
-it that way is what makes retrieval quality measurable on its own, separately
-from whether the LLM then writes a good answer.
-
-The two-stage shape (fetch a wider candidate pool, return a narrower final
-set) is here from the start so a reranker can slot into the gap without the
-call sites changing.
-"""
 
 from dataclasses import dataclass
 import os
@@ -18,39 +8,20 @@ import chromadb
 
 from core.indexing.embedder import embed_query
 
-# core/retrieval/retriever.py -> parent.parent = core/ -> parent = project root
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 STORE_DIR = BASE_DIR / "data" / "vector_store"
 
 DEFAULT_COLLECTION = "chunks_500_100"
 
-# "hybrid" (dense + BM25) or "dense". Hybrid is the default because it is
-# strictly a superset — it can only add lexical matches the embedding step
-# missed — and the cost of building the sparse index is paid once.
 DEFAULT_MODE = "hybrid"
 
-# Passages handed to the generator. More context isn't automatically better —
-# an LLM given ten passages has more chance to answer from the wrong one.
 DEFAULT_TOP_K = 4
 
-# Candidates fetched before any reranking. With no reranker in place this is
-# the same as TOP_K; the parameter exists so adding one is a config change.
 DEFAULT_CANDIDATES = 4
 
 
 @dataclass(frozen=True)
 class Passage:
-    """A retrieved chunk with enough provenance to cite it.
-
-    `score` is whatever the *last* stage in the pipeline ranked on — cosine
-    from dense retrieval, an RRF value from fusion, a cross-encoder
-    probability after reranking. It is only comparable within one result set.
-
-    `retrieval_score` is always the dense cosine similarity (0.0 if the
-    passage was surfaced by BM25 alone and dense never scored it). It is
-    carried unchanged through fusion and reranking so that a confidence check
-    has one stable, interpretable signal regardless of which stages are on.
-    """
 
     text: str
     source: str
@@ -108,18 +79,7 @@ def _as_bool(value):
 
 
 def build_retriever(mode=None, collection_name=DEFAULT_COLLECTION, rerank=None):
-    """The retriever the rest of the system should use.
 
-    `mode` ("dense" | "hybrid") falls back to the RETRIEVER_MODE environment
-    variable, then to DEFAULT_MODE. `rerank` (bool) falls back to the RERANK
-    variable — when on, the base retriever is wrapped in a cross-encoder
-    reranking stage. So the whole pipeline shape is a config change, never a
-    code change.
-
-    Every heavier import (hybrid → hazm/rank-bm25, rerank → sentence-
-    transformers) is deferred, so a deployment only pays for the stages it
-    switches on.
-    """
     mode = mode or os.getenv("RETRIEVER_MODE", DEFAULT_MODE)
     if rerank is None:
         rerank = _as_bool(os.getenv("RERANK", ""))

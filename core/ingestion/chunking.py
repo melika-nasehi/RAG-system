@@ -1,15 +1,4 @@
-"""Split a PDF into chunk records ready for embedding.
 
-Two repairs happen before splitting: hazm normalisation folds the Arabic and
-Persian forms of the same letters together, and Persian digit runs are
-reversed for files whose numerals came out backwards — but only where a date
-test shows the file actually needs it, since reversing a correct file would
-corrupt it.
-
-Module form of src/2_chunking/chunk_documents.py. Chunk ids and record shape
-match the existing chunk files exactly, so a document added here is
-indistinguishable from one from the original offline run.
-"""
 
 from __future__ import annotations
 
@@ -23,8 +12,6 @@ from pypdf import PdfReader
 DEFAULT_CHUNK_SIZE = 500
 DEFAULT_CHUNK_OVERLAP = 100
 
-# A chunk this short carries no usable context — usually a page-number
-# fragment left at a page boundary.
 MIN_CHUNK_LENGTH = 100
 
 SEPARATORS = ["\n\n", "\n", "؟", ".", "،", " ", ""]
@@ -40,8 +27,7 @@ _normalizer = Normalizer()
 
 
 def collection_params(collection_name: str) -> tuple[int, int]:
-    """('chunks_500_100') -> (500, 100). The chunk configuration is encoded
-    in the collection name, so ingestion matches whatever the store holds."""
+
     parts = collection_name.split("_")
     try:
         return int(parts[-2]), int(parts[-1])
@@ -103,8 +89,7 @@ def chunk_pdf(
     chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
     source_name: str | None = None,
 ) -> list[dict]:
-    """Chunk records for one PDF. `source_name` overrides the filename stored
-    on each record and used to build its id (default: the file's own name)."""
+
     path = Path(pdf_path)
     name = source_name or path.name
     stem = Path(name).stem
